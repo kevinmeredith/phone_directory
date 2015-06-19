@@ -8,6 +8,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.slick" %% "slick" % "3.0.0",
   "org.slf4j" % "slf4j-nop" % "1.6.4",
   "org.scalaz" %% "scalaz-core" % "7.1.2",
+  "org.scalaz" %% "scalaz-effect" % "7.1.2",
   "org.scalatest" % "scalatest_2.11" % "2.2.1" % "test"
 )
 
