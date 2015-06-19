@@ -4,11 +4,19 @@ version := "1.0"
 
 scalaVersion := "2.11.6"
 
+resolvers ++= Seq(
+  "tpolecat" at "http://dl.bintray.com/tpolecat/maven",
+  "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases"
+)
+
+lazy val doobieVersion = "0.2.2"
+
 libraryDependencies ++= Seq(
-  "com.typesafe.slick" %% "slick" % "3.0.0",
-  "org.slf4j" % "slf4j-nop" % "1.6.4",
   "org.scalaz" %% "scalaz-core" % "7.1.2",
   "org.scalaz" %% "scalaz-effect" % "7.1.2",
+  "org.tpolecat" %% "doobie-core" % doobieVersion,
+  "org.tpolecat" %% "doobie-contrib-postgresql" % doobieVersion,
+  "org.tpolecat" %% "doobie-contrib-specs2"     % doobieVersion,
   "org.scalatest" % "scalatest_2.11" % "2.2.1" % "test"
 )
 

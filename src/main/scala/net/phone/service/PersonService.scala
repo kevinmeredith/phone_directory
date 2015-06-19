@@ -8,12 +8,12 @@ import net.phone.repository.PersonRepository
 import scalaz.effect.IO
 
 trait PersonService {
-	def create(repository: PersonRepository, person: Person): IO[\/[NonEmptyList[PersonError], Person]] = {
-		Person.create(person.id, person.name, person.age, person.gender).pure[IO] >>=
+	// TODO: consider `http://stackoverflow.com/questions/30928454/for-comprehension-example-with-and-io`
+	def create(repository: PersonRepository, person: Person): IO[NonEmptyList[PersonError] \/ Person] = { 
+		Person.create(person.id, person.name, person.age, person.gender)		.pure[IO] >>=
 			(_ match {
 				case -\/(errors) => errors.left.pure[IO]
 				case \/-(p)      => repository.create(p)
 			})
 	}
-
 }

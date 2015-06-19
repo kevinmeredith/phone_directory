@@ -5,7 +5,7 @@ import Scalaz._
 import net.phone.common.Common.{PersonError, InvalidName, InvalidAge}
 
 object Person {
-    def create(id: Long, name: String, age: Int, gender: Gender): \/[NonEmptyList[PersonError], Person] =
+    def create(id: Option[Long], name: String, age: Int, gender: Gender): NonEmptyList[PersonError] \/ Person =
 		(validateName(name) |@| validateAge(age)) {(n, a) => Person(id, n, a, gender)}.disjunction
 
 	private def validateName(name: String): Validation[NonEmptyList[PersonError], String] = 
@@ -14,9 +14,16 @@ object Person {
 	private def validateAge(age: Int): Validation[NonEmptyList[PersonError], Int] = 
 		if(age >= 0) age.successNel else InvalidAge.failureNel
 
-	sealed trait Gender
-	case object Male extends Gender
-	case object Female extends Gender
+	sealed trait Gender 
+	case object Male extends Gender 
+	case object Female extends Gender 
+
+	// credit: http://stackoverflow.com/a/30946172/409976
+	implicit val GenderShows: Show[Gender] = Show.shows {
+	  case Male   => "male"
+	  case Female => "female"
+	}
+
 }
 
-case class Person private(id: Long, name: String, age: Int, gender: Person.Gender)
+case class Person private(id: Option[Long], name: String, age: Int, gender: Person.Gender)
