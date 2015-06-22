@@ -17,7 +17,8 @@ libraryDependencies ++= Seq(
   "org.tpolecat" %% "doobie-core" % doobieVersion,
   "org.tpolecat" %% "doobie-contrib-postgresql" % doobieVersion,
   "org.tpolecat" %% "doobie-contrib-specs2"     % doobieVersion,
-  "org.scalatest" % "scalatest_2.11" % "2.2.1" % "test"
+  "org.scalatest" % "scalatest_2.11" % "2.2.1" % "test",
+  "org.scalacheck" %% "scalacheck" % "1.12.4" % "test"
 )
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature")
