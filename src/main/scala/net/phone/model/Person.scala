@@ -2,7 +2,7 @@ package net.phone.model
 
 import scalaz._
 import Scalaz._
-import net.phone.common.Common.{PersonError, InvalidName, InvalidAge}
+import net.phone.common.Common._
 
 object Person {
     def create(id: Option[Long], name: String, age: Int, gender: Gender): NonEmptyList[PersonError] \/ Person =
@@ -14,6 +14,12 @@ object Person {
 	private def validateAge(age: Int): Validation[NonEmptyList[PersonError], Int] = 
 		if(age >= 0) age.successNel else InvalidAge.failureNel
 
+	private def validateGender(gender: String): Validation[NonEmptyList[PersonError], Gender] = gender.toUpperCase match {
+		case "MALE"   => Male.successNel
+		case "FEMALE" => Female.successNel
+		case _ 		  => InvalidGender.failureNel
+	}
+
 	sealed trait Gender 
 	case object Male extends Gender 
 	case object Female extends Gender 
@@ -24,6 +30,8 @@ object Person {
 	  case Female => "female"
 	}
 
+	def read(id: Long, name: String, age: Int, gender: String): NonEmptyList[PersonError] \/ Person =
+		(validateName(name) |@| validateAge(age) |@| validateGender(gender)) {(n, a, g) => Person(Some(id), n, a, g)}.disjunction	
 }
 
 case class Person private(id: Option[Long], name: String, age: Int, gender: Person.Gender)

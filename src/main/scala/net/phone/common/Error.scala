@@ -8,4 +8,5 @@ object Common {
 	sealed trait InvalidPersonError extends PersonError
 	case object InvalidName extends InvalidPersonError
 	case object InvalidAge extends InvalidPersonError
+	case object InvalidGender extends PersonError
 }
