@@ -20,6 +20,30 @@ object PostgresRepository extends PersonRepository {
 		createPerson >>= { x => f[PersonError, Person](x).point[IO] }
 	}		
 
+
+	override def get(id: Long): IO[NonEmptyList[PersonError] \/ Option[Person]] = {
+		val personLookup: IO[\/[PersonError, NonEmptyList[PersonError] \/ Option[Person]]] = 
+			safeGet(id).transact(xa)
+		personLookup.map(f[PersonError, Option[Person]](_))
+	}	
+
+	private def unsafeGet(id: Long): ConnectionIO[NonEmptyList[PersonError] \/ Option[Person]] = { 
+		val result: ConnectionIO[List[(Long, String, Int, String)]] = 
+			sql"select id, name, age, gender from person where id = $id".query[(Long, String, Int, String)].process.take(1).list
+		result.map{ _ match { 
+				case Nil    => \/-(None)
+				case p :: _ => Person.read(p._1, p._2, p._3, p._4) >>= {a => \/-(Some(a)) }
+			}	
+		}
+	}
+
+	private def safeGet(id: Long): ConnectionIO[\/[PersonError, NonEmptyList[PersonError] \/ Option[Person]]] = 
+		unsafeGet(id).attemptSomeSqlState {
+			case _ => DatabaseError
+		}
+
+	// Helper function to return a `NonEmptyList[PersonError] \/ Person` due to the
+	// `\/[DatabaseError, NonEmptyList[PersonError] \/ Person]`, a result of possible database errors when querying.
 	private def f[A, B](e: \/[A, NonEmptyList[A] \/ B]): NonEmptyList[A] \/ B = e match {
 		case -\/(l) => -\/(NonEmptyList(l))
 		case \/-(r) => r
@@ -39,3 +63,4 @@ object PostgresRepository extends PersonRepository {
 		} yield Person.read(res._1, res._2, res._3, res._4)    
 	}
 }
+

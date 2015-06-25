@@ -16,4 +16,7 @@ trait PersonService {
 				case \/-(p)      => repository.create(p)
 			})
 	}
+
+	def get(repository: PersonRepository, id: Long): IO[NonEmptyList[PersonError] \/ Option[Person]] = 
+		repository.get(id)
 }

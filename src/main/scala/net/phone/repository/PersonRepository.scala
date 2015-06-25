@@ -7,4 +7,5 @@ import scalaz.effect.IO
 
 trait PersonRepository {
 	def create(person: Person): IO[NonEmptyList[PersonError] \/ Person]
+	def get(id: Long): IO[NonEmptyList[PersonError] \/ Option[Person]]
 }
