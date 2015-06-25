@@ -3,7 +3,7 @@ package net.phone.common
 object Common {
 	
 	sealed trait PersonError
-	case class DatabaseError(e: Exception) extends PersonError
+	case object DatabaseError extends PersonError // TODO: add more information
 
 	sealed trait InvalidPersonError extends PersonError
 	case object InvalidName extends InvalidPersonError
